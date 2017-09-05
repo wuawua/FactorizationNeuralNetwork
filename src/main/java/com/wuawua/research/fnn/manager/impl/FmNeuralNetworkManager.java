@@ -11,7 +11,6 @@ import com.wuawua.research.fnn.data.Feature;
 import com.wuawua.research.fnn.layer.Layer;
 import com.wuawua.research.fnn.layer.impl.fm.FmInputLayer;
 import com.wuawua.research.fnn.layer.impl.fm.FmOutputLayer;
-import com.wuawua.research.fnn.layer.impl.fm.FmOutputLayerWithAdagrad;
 import com.wuawua.research.fnn.manager.NeuralNetworkManager;
 import com.wuawua.research.fnn.manager.NeuralNetworkManager.TrainThread;
 import com.wuawua.research.fnn.math.Matrix;
@@ -107,9 +106,7 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 		    NeuralNetwork<Feature> nn = new FmNeuralNetwork(numLabels, inputLayer, outputLayer);
 		    
 		    
-			new TrainThread(this, args, dict, inputWeights, inputBias, 
-					inputReg,  outputWeights, outputBias, outputReg, i, fileSize,
-					inputLayer, outputLayer, nn).start();
+			new TrainThread(this, args, dict, i, fileSize, inputLayer, outputLayer, nn).start();
 		}
 
 		synchronized (this) {

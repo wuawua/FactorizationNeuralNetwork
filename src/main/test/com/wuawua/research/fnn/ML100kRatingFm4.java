@@ -90,9 +90,6 @@ public class ML100kRatingFm4 {
         Vector regM = new Vector(numFeatures);
         regM.fill(0.1f);
         
-        
-        //BoundedFM fm = new BoundedFM(1.0, 5.0, train.numFeatures(), K, new Random(), sdev);
-        
         FmInputLayer inputLayer = new FmInputLayer( K, learnRate, inputBias, regW, inputWeights,regW);
         FmOutputLayer outputLayer = new FmOutputLayer(K, numLabels, learnRate, outputBias, regM, outputWeights, regM);
         

@@ -16,7 +16,6 @@ public class FmOutputLayer extends Layer<Feature> {
     private int numLabels;
     private final int SINGLE_LABEL_NUMBER = 1;
     private Vector featureWeights;
-    private float b = 0;
 
     /**
      * Constructor.

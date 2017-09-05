@@ -14,6 +14,20 @@ public class SimpleDataSet<T> implements DataSet<T> {
     private final int numFeatures;
     private final Random rnd;
 
+    
+    public SimpleDataSet() {
+        this(0, new Random(), new ArrayList<T>());
+    }
+    
+    /**
+     * Constructor.
+     *
+     * @param numFeatures number of features
+     */
+    public SimpleDataSet(int numFeatures) {
+        this(numFeatures, new Random(), new ArrayList<T>());
+    }
+    
     /**
      * Constructor.
      *
@@ -27,14 +41,7 @@ public class SimpleDataSet<T> implements DataSet<T> {
         this.records = new ArrayList<T>(records);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param numFeatures number of features
-     */
-    public SimpleDataSet(int numFeatures) {
-        this(numFeatures, new Random(), new ArrayList<T>());
-    }
+    
     
     public List<T> getRecords() {
         return records;

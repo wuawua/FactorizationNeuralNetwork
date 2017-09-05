@@ -1,5 +1,8 @@
 package com.wuawua.research.fnn.manager;
 
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -24,7 +27,9 @@ import org.apache.log4j.Logger;
 
 import com.wuawua.research.fnn.Args;
 import com.wuawua.research.fnn.data.DataRecord;
+import com.wuawua.research.fnn.data.DataSet;
 import com.wuawua.research.fnn.data.Feature;
+import com.wuawua.research.fnn.data.SimpleDataSet;
 import com.wuawua.research.fnn.layer.Layer;
 import com.wuawua.research.fnn.layer.impl.fm.FmInputLayer;
 import com.wuawua.research.fnn.layer.impl.fm.FmOutputLayer;
@@ -62,6 +67,8 @@ public class NeuralNetworkManager {
     protected Vector outputReg;
 
     protected int labelIndex = 0;
+    double rmse = 0.0;
+	int counter = 0;
 	//List<Integer> skips;
 	
     protected final int SINGLE_LABEL_NUMBER = 1;
@@ -119,17 +126,10 @@ public class NeuralNetworkManager {
 		NeuralNetwork<Feature> nn;
 
 		public TrainThread(NeuralNetworkManager network, Args args, Dictionary dict, 
-				Matrix inputWeights, Vector inputBias, Vector inputReg, Matrix outputWeights, 
-				Vector outputBias, Vector outputReg, int threadId, long fileSize,
-				Layer<Feature> inputLayer, Layer<Feature> outputLayer, NeuralNetwork<Feature> nn) {
+				int threadId, long fileSize, Layer<Feature> inputLayer, Layer<Feature> outputLayer, 
+				NeuralNetwork<Feature> nn) {
 			this.network = network;
 			this.dict = dict;
-			//this.inputWeights = inputWeights;
-			//this.inputBias = inputBias;
-			//this.inputReg = inputReg;
-			//this.outputWeights = outputWeights;
-			//this.outputBias = outputBias;
-			//this.outputReg = outputReg;
 			this.threadId = threadId;
 			this.fileSize = fileSize;
 			this.inputLayer = inputLayer;
@@ -141,69 +141,39 @@ public class NeuralNetworkManager {
 			if (logger.isDebugEnabled()) {
 				logger.debug("thread: " + threadId + " RUNNING!");
 			}
+			
+			long begin = threadId * fileSize / args.thread;
 			long end = (threadId + 1) * fileSize / args.thread;
 			
-			for(int epoch = 1; epoch <= args.epoch; epoch++) {				
-				long begin = threadId * fileSize / args.thread;
-				BufferedReader br = null;
-				try {
-					br = new BufferedReader(new FileReader(args.input));
-					Utils.seek(br, begin);
-					String lineString;
-					
-					while ( begin < end) {						
-						//Read a line of data record.
-						lineString = br.readLine();
-						if (lineString == null) {
-							try {
-								br.close();
-								br = new BufferedReader(new FileReader(args.input));
-								if (logger.isDebugEnabled()) {
-									logger.debug("Input file reloaded!");
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							lineString = br.readLine();
-						}
-						while (Utils.isEmpty(lineString) || lineString.startsWith("#")) {
-							lineString = br.readLine();
-						}
-						
-						//Data record
-						DataRecord<Feature> record = dict.getDataRecord(lineString, labelIndex, args.skips);
-		            	
-						normalize(record, true);
-						
-						nn.learn(record);
-						
-		            	//Next line
-		            	begin++;
-					} //End of while
-				} catch (IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				} finally {
-					if (br != null)
-						try {
-							br.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-				} //End of try
-	
-				
-				
-				//Display neural network model performance.
-				if (threadId == 0) {
-					try {
-						double trainRMSE = test(args.input, nn);
-						double testRMSE = test(args.test, nn);
-						System.out.printf("epoch %d, train RMSE %.8f, test RMSE %.8f%n", epoch, trainRMSE, testRMSE);
-					} catch (IOException e) {;
-					}	
+			SimpleDataSet<DataRecord<Feature>> trainSet;
+			try {
+				trainSet = getDataSet(args, dict, args.input, begin, end, labelIndex);
+			
+				SimpleDataSet<DataRecord<Feature>> testSet = null;
+				if(args.test != null) {
+					testSet = getDataSet(args, dict, args.test, begin, end, labelIndex);
 				}
-			} //End of for
+				
+				for(int epoch = 1; epoch <= args.epoch; epoch++) {				
+					
+					//Train neural network
+					nn.learn(epoch, trainSet, testSet);
+					
+					
+					//Display neural network model performance.
+					if (threadId == 0 && epoch % 10 == 0) {
+						try {
+							double trainRMSE = test(args.input, nn);
+							double testRMSE = test(args.test, nn);
+							System.out.printf("epoch %d, train RMSE %.8f, test RMSE %.8f%n", epoch, trainRMSE, testRMSE);
+						} catch (IOException e) {;
+						}	
+					}
+				} //End of for
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			synchronized (network) {
 				if (logger.isDebugEnabled()) {
@@ -215,15 +185,74 @@ public class NeuralNetworkManager {
 		}
 	}
 	
+	/**
+	 * Read data set from file
+	 * @param args
+	 * @param dict
+	 * @param file
+	 * @param begin
+	 * @param end
+	 * @param labelIndex
+	 * @return
+	 * @throws IOException
+	 */
+	public SimpleDataSet<DataRecord<Feature>> getDataSet(Args args, Dictionary dict, 
+			String file, long begin, long end, int labelIndex) throws IOException {
+    	SimpleDataSet<DataRecord<Feature>> dataset = new SimpleDataSet<DataRecord<Feature>>(dict.getWords());
+    	BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(args.input));
+			Utils.seek(br, begin);
+			String lineString;
+			
+			while ( begin < end) {						
+				//Read a line of data record.
+				lineString = br.readLine();
+				if (lineString == null) {
+					try {
+						br.close();
+						br = new BufferedReader(new FileReader(args.input));
+						if (logger.isDebugEnabled()) {
+							logger.debug("Input file reloaded!");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					lineString = br.readLine();
+				}
+				while (Utils.isEmpty(lineString) || lineString.startsWith("#")) {
+					lineString = br.readLine();
+				}
+				
+				//Data record
+				DataRecord<Feature> record = dict.getDataRecord(lineString, labelIndex, args.skips);
+				normalize(record, true);
+				dataset.add(record);
+            	begin++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} finally {
+			if (br != null)
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		} //End of try
+
+
+        return dataset;
+    }
+	
 	public void normalize(DataRecord<Feature> record, boolean normal) {
-		//float[] R = new float[problem.l];
-		normal = false;
 		if(normal) {
 			float norm = 0;
 			for(Feature feature : record.getFeatures()) {
 				norm += feature.getValue() * feature.getValue();
 			}
-			
+			norm = norm/((float)record.getFeatureSize());
 			for(Feature feature : record.getFeatures()) {
 				float value = feature.getValue() / (float) Math.sqrt(norm);
 				feature.setValue(value);
@@ -255,6 +284,22 @@ public class NeuralNetworkManager {
 			dis.close();
 			fis.close();
 		}
+		
+		rmse = Math.sqrt(rmse/counter); 
+		return rmse;
+    }
+	
+	public double test(DataSet<DataRecord<Feature>> dataset, NeuralNetwork<Feature> nn) throws IOException {
+		rmse = 0.0;
+		counter = 0;
+		
+		dataset.stream().forEach(x -> {
+			//DataRecord<Feature> record = dict.getDataRecord(lineString, args.labelIndex, args.skips);
+			//normalize(record, true);
+			rmse += nn.getRMSE(x);
+    		counter++;
+		});
+			
 		
 		rmse = Math.sqrt(rmse/counter); 
 		return rmse;

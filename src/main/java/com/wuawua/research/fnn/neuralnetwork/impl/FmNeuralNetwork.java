@@ -46,38 +46,18 @@ public class FmNeuralNetwork extends NeuralNetwork<Feature> {
      */
     @Override
     public void learn(int numIter, DataSet<DataRecord<Feature>> train, DataSet<DataRecord<Feature>> test) {
-    	
-    	int totalTrainNum = numIter * train.numRecords();
-    	trainNum = 0;
-    	System.out.println("totalTrainNum " + totalTrainNum);
-        for (int t = 1; t <= numIter; t++) {
-            long time0 = System.nanoTime();
-            train.shuffle();
-            train.stream().forEach(x -> {
-            //for(DataRecord record : train.)
-            	double percent = 1.0;
-            	
-            	//Forward
-            	Vector hidden = inputLayer.forward(x, null);
-            	Vector output = outputLayer.forward(x, hidden);
-            	
-            	//Backward
-            	Vector gradient = outputLayer.backward(x, output, hidden, null, percent);
-            	inputLayer.backward(x, null, null, gradient, percent);
-            	
-            	trainNum ++;
-            });
-
-            
-            int iter = t;
-            long time1 = System.nanoTime() - time0;
-
-            //LOG.info(String.format("iteration n = %3d t = %.2fs", iter, time1 / 1_000_000_000.0));
-            //LOG.info(() -> String.format("iteration n = %3d e = %.6f e = %.6f", iter, error(fm, train), error(fm, test)));
-            System.out.println(iter + "," + error(train) + "," + error(test));
-        }
-        
-    	
-    	
+        train.shuffle();
+        train.stream().forEach(x -> {
+        	double percent = 1.0;
+        	
+        	//Forward
+        	Vector hidden = inputLayer.forward(x, null);
+        	Vector output = outputLayer.forward(x, hidden);
+        	
+        	//Backward
+        	Vector gradient = outputLayer.backward(x, output, hidden, null, percent);
+        	inputLayer.backward(x, null, null, gradient, percent);
+        	
+        });
     }
 }
