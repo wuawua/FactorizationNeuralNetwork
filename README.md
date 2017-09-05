@@ -1,2 +1,2 @@
 # FactorizationNeuralNetwork
-Factorization neural network for recommender system
+Factorization neural network for recommender system.
