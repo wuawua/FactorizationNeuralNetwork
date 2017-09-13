@@ -1,4 +1,4 @@
-package com.wuawua.research.fnn.neuralnetwork;
+package com.wuawua.research.nn.neuralnetwork;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -6,11 +6,11 @@ import static java.lang.Math.min;
 import java.util.function.DoubleBinaryOperator;
 import java.util.logging.Logger;
 
-import com.wuawua.research.fnn.data.DataRecord;
-import com.wuawua.research.fnn.data.DataSet;
-import com.wuawua.research.fnn.data.Feature;
-import com.wuawua.research.fnn.layer.Layer;
-import com.wuawua.research.fnn.math.Vector;
+import com.wuawua.research.nn.data.DataRecord;
+import com.wuawua.research.nn.data.DataSet;
+import com.wuawua.research.nn.data.Feature;
+import com.wuawua.research.nn.layer.Layer;
+import com.wuawua.research.nn.math.Vector;
 
 
 /***
@@ -63,8 +63,8 @@ public class NeuralNetwork<T> {
     	else {
     		target = record.getTarget() - 1;
     	}
-    	Vector hidden = inputLayer.forward(record, null);
-    	Vector output = outputLayer.forward(record, hidden);
+    	Vector hidden = inputLayer.forwardPropagate(record, null);
+    	Vector output = outputLayer.forwardPropagate(record, hidden);
     	int label = -1;
     	double max = Double.MIN_VALUE;
     	for(int i = 0; i < numLabels; i++) {

@@ -26,19 +26,19 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.log4j.Logger;
 
 import com.wuawua.research.fnn.Args;
-import com.wuawua.research.fnn.data.DataRecord;
-import com.wuawua.research.fnn.data.DataSet;
-import com.wuawua.research.fnn.data.Feature;
-import com.wuawua.research.fnn.data.SimpleDataSet;
-import com.wuawua.research.fnn.layer.Layer;
-import com.wuawua.research.fnn.layer.impl.fm.FmInputLayer;
-import com.wuawua.research.fnn.layer.impl.fm.FmOutputLayer;
-import com.wuawua.research.fnn.math.Matrix;
-import com.wuawua.research.fnn.math.Vector;
 import com.wuawua.research.fnn.model.Dictionary;
-import com.wuawua.research.fnn.neuralnetwork.NeuralNetwork;
-import com.wuawua.research.fnn.neuralnetwork.impl.FmNeuralNetwork;
 import com.wuawua.research.fnn.utils.Utils;
+import com.wuawua.research.nn.data.DataRecord;
+import com.wuawua.research.nn.data.DataSet;
+import com.wuawua.research.nn.data.Feature;
+import com.wuawua.research.nn.data.SimpleDataSet;
+import com.wuawua.research.nn.layer.Layer;
+import com.wuawua.research.nn.layer.impl.fm.FmInputLayer;
+import com.wuawua.research.nn.layer.impl.fm.FmOutputLayer;
+import com.wuawua.research.nn.math.Matrix;
+import com.wuawua.research.nn.math.Vector;
+import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
+import com.wuawua.research.nn.neuralnetwork.impl.FmNeuralNetwork;
 
 
 
@@ -148,7 +148,7 @@ public class NeuralNetworkManager {
 			SimpleDataSet<DataRecord<Feature>> trainSet;
 			try {
 				trainSet = getDataSet(args, dict, args.input, begin, end, labelIndex);
-			
+				
 				SimpleDataSet<DataRecord<Feature>> testSet = null;
 				if(args.test != null) {
 					testSet = getDataSet(args, dict, args.test, begin, end, labelIndex);

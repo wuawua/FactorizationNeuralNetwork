@@ -1,14 +1,15 @@
-package com.wuawua.research.fnn.layer.impl.fm;
+package com.wuawua.research.nn.layer.impl.fm;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.util.Random;
-import com.wuawua.research.fnn.data.DataRecord;
-import com.wuawua.research.fnn.data.Feature;
-import com.wuawua.research.fnn.layer.Layer;
-import com.wuawua.research.fnn.math.Matrix;
-import com.wuawua.research.fnn.math.Vector;
+
+import com.wuawua.research.nn.data.DataRecord;
+import com.wuawua.research.nn.data.Feature;
+import com.wuawua.research.nn.layer.Layer;
+import com.wuawua.research.nn.math.Matrix;
+import com.wuawua.research.nn.math.Vector;
 
 
 public class FmOutputLayer extends Layer<Feature> {
@@ -25,7 +26,7 @@ public class FmOutputLayer extends Layer<Feature> {
      * @param m initial feature interaction matrix
      */
     public FmOutputLayer(int dim, int numLabels, float learnRate, Vector bias, Vector regBias, Matrix weights, Vector regWeights) {
-    	super(dim, learnRate, bias, regBias, weights, regWeights);
+    	super(dim, learnRate, bias, regBias, weights, regWeights, null);
     	this.numLabels = numLabels;
     	this.featureWeights = new Vector(weights.getRows());
     }
@@ -37,7 +38,7 @@ public class FmOutputLayer extends Layer<Feature> {
     }
     
     @Override
-    public Vector forward(DataRecord<Feature> x, Vector hidden) {
+    public Vector forwardPropagate(DataRecord<Feature> x, Vector hidden) {
     	Vector output = new Vector(numLabels);
     	output.zero();
     	for(Feature feature : x.getFeatures()) {
@@ -77,7 +78,7 @@ public class FmOutputLayer extends Layer<Feature> {
 	}
         
     @Override
-    public Vector backward(DataRecord<Feature> x, Vector output, Vector hidden, Vector gradient, double percent) {
+    public Vector backwardPropagate(DataRecord<Feature> x, Vector output, Vector hidden, Vector gradient) {
     	Vector nextGradient = new Vector(dim);
     	int target = (numLabels == SINGLE_LABEL_NUMBER)?(int)(x.getTarget()):(int)(x.getTarget() - 1);
 
@@ -116,4 +117,9 @@ public class FmOutputLayer extends Layer<Feature> {
     	float max = 5.0f;
         return x; //min(max, max(min, x));
     }
+
+
+	@Override
+	public void accumulateGradient(Vector grad) {
+	}
 }

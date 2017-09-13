@@ -1,4 +1,4 @@
-package com.wuawua.research.fnn.math;
+package com.wuawua.research.nn.math;
 
 import java.io.IOException;
 import java.io.InputStream;

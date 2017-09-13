@@ -28,16 +28,16 @@ import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well19937c;
 
-import com.wuawua.research.fnn.data.DataRecord;
-import com.wuawua.research.fnn.data.Feature;
-import com.wuawua.research.fnn.data.SimpleDataSet;
-import com.wuawua.research.fnn.layer.impl.fm.FmInputLayer;
-import com.wuawua.research.fnn.layer.impl.fm.FmOutputLayer;
-import com.wuawua.research.fnn.math.Matrix;
-import com.wuawua.research.fnn.math.Vector;
 import com.wuawua.research.fnn.model.Dictionary;
-import com.wuawua.research.fnn.neuralnetwork.NeuralNetwork;
-import com.wuawua.research.fnn.neuralnetwork.impl.FmNeuralNetwork;
+import com.wuawua.research.nn.data.DataRecord;
+import com.wuawua.research.nn.data.Feature;
+import com.wuawua.research.nn.data.SimpleDataSet;
+import com.wuawua.research.nn.layer.impl.fm.FmInputLayer;
+import com.wuawua.research.nn.layer.impl.fm.FmOutputLayer;
+import com.wuawua.research.nn.math.Matrix;
+import com.wuawua.research.nn.math.Vector;
+import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
+import com.wuawua.research.nn.neuralnetwork.impl.FmNeuralNetwork;
 
 
 public class FmConverter {

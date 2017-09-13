@@ -20,9 +20,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.primitives.UnsignedInteger;
 import com.wuawua.research.fnn.Args;
 import com.wuawua.research.fnn.Args.model_name;
-import com.wuawua.research.fnn.data.DataRecord;
-import com.wuawua.research.fnn.data.Feature;
 import com.wuawua.research.fnn.utils.IOUtil;
+import com.wuawua.research.nn.data.DataRecord;
+import com.wuawua.research.nn.data.Feature;
 
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 

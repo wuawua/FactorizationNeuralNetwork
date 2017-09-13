@@ -1,4 +1,4 @@
-package com.wuawua.research.fnn.math;
+package com.wuawua.research.nn.math;
 
 import org.jblas.FloatMatrix;
 

@@ -1,13 +1,13 @@
-package com.wuawua.research.fnn.neuralnetwork.impl;
+package com.wuawua.research.nn.neuralnetwork.impl;
 
 import java.util.logging.Logger;
 
-import com.wuawua.research.fnn.data.DataRecord;
-import com.wuawua.research.fnn.data.DataSet;
-import com.wuawua.research.fnn.data.Feature;
-import com.wuawua.research.fnn.layer.Layer;
-import com.wuawua.research.fnn.math.Vector;
-import com.wuawua.research.fnn.neuralnetwork.NeuralNetwork;
+import com.wuawua.research.nn.data.DataRecord;
+import com.wuawua.research.nn.data.DataSet;
+import com.wuawua.research.nn.data.Feature;
+import com.wuawua.research.nn.layer.Layer;
+import com.wuawua.research.nn.math.Vector;
+import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
 
 
 /***
@@ -33,12 +33,12 @@ public class FmNeuralNetwork extends NeuralNetwork<Feature> {
     	double percent = 1.0;
     	
     	//Forward
-    	Vector hidden = inputLayer.forward(record, null);
-    	Vector output = outputLayer.forward(record, hidden);
+    	Vector hidden = inputLayer.forwardPropagate(record, null);
+    	Vector output = outputLayer.forwardPropagate(record, hidden);
     	
     	//Backward
-    	Vector gradient = outputLayer.backward(record, output, hidden, null, percent);
-    	inputLayer.backward(record, null, null, gradient, percent);
+    	Vector gradient = outputLayer.backwardPropagate(record, output, hidden, null);
+    	inputLayer.backwardPropagate(record, null, null, gradient);
     }
     
     /**
@@ -51,12 +51,12 @@ public class FmNeuralNetwork extends NeuralNetwork<Feature> {
         	double percent = 1.0;
         	
         	//Forward
-        	Vector hidden = inputLayer.forward(x, null);
-        	Vector output = outputLayer.forward(x, hidden);
+        	Vector hidden = inputLayer.forwardPropagate(x, null);
+        	Vector output = outputLayer.forwardPropagate(x, hidden);
         	
         	//Backward
-        	Vector gradient = outputLayer.backward(x, output, hidden, null, percent);
-        	inputLayer.backward(x, null, null, gradient, percent);
+        	Vector gradient = outputLayer.backwardPropagate(x, output, hidden, null);
+        	inputLayer.backwardPropagate(x, null, null, gradient);
         	
         });
     }

@@ -7,17 +7,19 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
 
-import com.wuawua.research.fnn.data.Feature;
-import com.wuawua.research.fnn.layer.Layer;
-import com.wuawua.research.fnn.layer.impl.fm.FmInputLayer;
-import com.wuawua.research.fnn.layer.impl.fm.FmOutputLayer;
 import com.wuawua.research.fnn.manager.NeuralNetworkManager;
 import com.wuawua.research.fnn.manager.NeuralNetworkManager.TrainThread;
-import com.wuawua.research.fnn.math.Matrix;
-import com.wuawua.research.fnn.math.Vector;
-import com.wuawua.research.fnn.neuralnetwork.NeuralNetwork;
-import com.wuawua.research.fnn.neuralnetwork.impl.FmNeuralNetwork;
 import com.wuawua.research.fnn.utils.Utils;
+import com.wuawua.research.nn.data.Feature;
+import com.wuawua.research.nn.layer.Layer;
+import com.wuawua.research.nn.layer.impl.fm.FmInputLayer;
+import com.wuawua.research.nn.layer.impl.fm.FmOutputLayer;
+import com.wuawua.research.nn.math.Matrix;
+import com.wuawua.research.nn.math.Vector;
+import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
+import com.wuawua.research.nn.neuralnetwork.impl.FmNeuralNetwork;
+import com.wuawua.research.nn.optimizer.Optimizer;
+import com.wuawua.research.nn.optimizer.SGD;
 
 
 /***
@@ -101,7 +103,8 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 		long fileSize = Utils.sizeLine(args.input);
 		for (int i = 0; i < args.thread; i++) {
 			
-			Layer<Feature> inputLayer = new FmInputLayer( args.dim, args.lr, inputBias, inputReg, inputWeights,inputReg);
+			Optimizer<Feature> optimizer = new SGD<Feature>(0, 0, args.lr);
+			Layer<Feature> inputLayer = new FmInputLayer( args.dim, args.lr, inputBias, inputReg, inputWeights,inputReg, optimizer);
 			Layer<Feature> outputLayer = new FmOutputLayer(args.dim, numLabels, args.lr, outputBias, inputReg, outputWeights, inputReg);
 		    NeuralNetwork<Feature> nn = new FmNeuralNetwork(numLabels, inputLayer, outputLayer);
 		    

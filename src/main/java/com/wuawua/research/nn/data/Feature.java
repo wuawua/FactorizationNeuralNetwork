@@ -1,4 +1,4 @@
-package com.wuawua.research.fnn.data;
+package com.wuawua.research.nn.data;
 
 public class Feature {
 	private int id;

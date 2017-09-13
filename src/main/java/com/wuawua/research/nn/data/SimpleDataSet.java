@@ -1,4 +1,4 @@
-package com.wuawua.research.fnn.data;
+package com.wuawua.research.nn.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
