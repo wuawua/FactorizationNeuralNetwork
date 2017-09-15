@@ -12,11 +12,14 @@ import com.wuawua.research.fnn.manager.NeuralNetworkManager.TrainThread;
 import com.wuawua.research.fnn.utils.Utils;
 import com.wuawua.research.nn.data.Feature;
 import com.wuawua.research.nn.layer.Layer;
+import com.wuawua.research.nn.layer.impl.ffm.FfmInputLayer;
+import com.wuawua.research.nn.layer.impl.ffm.FfmOutputLayer;
 import com.wuawua.research.nn.layer.impl.fm.FmInputLayer;
 import com.wuawua.research.nn.layer.impl.fm.FmOutputLayer;
 import com.wuawua.research.nn.math.Matrix;
 import com.wuawua.research.nn.math.Vector;
 import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
+import com.wuawua.research.nn.neuralnetwork.impl.FfmNeuralNetwork;
 import com.wuawua.research.nn.neuralnetwork.impl.FmNeuralNetwork;
 import com.wuawua.research.nn.optimizer.Adagrad;
 import com.wuawua.research.nn.optimizer.Optimizer;
@@ -28,9 +31,9 @@ import com.wuawua.research.nn.optimizer.SGD;
  * @author Huang Haiping
  *
  */
-public class FmNeuralNetworkManager extends NeuralNetworkManager {
+public class FfmNeuralNetworkManager extends NeuralNetworkManager {
 
-    private static final Logger LOG = Logger.getLogger(FmNeuralNetworkManager.class.getName());
+    private static final Logger LOG = Logger.getLogger(FfmNeuralNetworkManager.class.getName());
 
     
     public void train(String[] args_) throws IOException {
@@ -56,6 +59,8 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 			dict.readFromFile(args.test, labelIndex, args.skips);
 		}
 		
+		int numFields = dict.getNumFields();
+		System.out.println("numFields: " + numFields);
 		//Classification task has a lot of labels,  example 1,2,3,4,5
 		//ranking task has only one label, ranking task is Logistic regression. 
 		numLabels = dict.getNumLabels();
@@ -70,7 +75,7 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 		System.out.println(args.lr + " " + args.reg + " " + args.numLabels);
 		
 		//Initialize InputLayer parameters
-		inputWeights = new Matrix(dict.getWords() * numLabels, args.dim);
+		inputWeights = new Matrix(dict.getWords() * numLabels * numFields, args.dim);
 		inputBias = new Vector(dict.getWords());
 		inputReg = new Vector(dict.getWords());
 		for (int ii = 0; ii < inputWeights.getRows(); ii++) {
@@ -82,7 +87,7 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 		inputReg.fill(args.reg);
 		
 		//Initialize OutputLayer parameters
-		outputWeights = new Matrix(dict.getWords() * numLabels, args.dim);
+		outputWeights = new Matrix(dict.getWords() * numLabels * numFields, args.dim);
 		outputBias = new Vector(dict.getWords());
 		outputReg = new Vector(dict.getWords());
 		for (int ii = 0; ii < outputWeights.getRows(); ii++) {
@@ -104,12 +109,10 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 		long fileSize = Utils.sizeLine(args.input);
 		for (int i = 0; i < args.thread; i++) {
 			
-			Optimizer<Feature> optimizer = new Adagrad<Feature>(0, 0, args.lr);
-			Layer<Feature> inputLayer = new FmInputLayer( args.dim, args.lr, inputBias, inputReg, inputWeights,inputReg, optimizer);
-			
-			Optimizer<Feature> optimizer2 = new Adagrad<Feature>(0, 0, args.lr);
-			Layer<Feature> outputLayer = new FmOutputLayer(args.dim, numLabels, args.lr, outputBias, inputReg, outputWeights, inputReg, optimizer2);
-		    NeuralNetwork<Feature> nn = new FmNeuralNetwork(numLabels, inputLayer, outputLayer);
+			Optimizer<Feature> optimizer = new SGD<Feature>(0, 0, args.lr);
+			Layer<Feature> inputLayer = new FfmInputLayer( args.dim, numFields, args.lr, inputBias, inputReg, inputWeights,inputReg, optimizer);
+			Layer<Feature> outputLayer = new FfmOutputLayer(args.dim, numLabels, numFields, args.lr, outputBias, inputReg, outputWeights, inputReg);
+		    NeuralNetwork<Feature> nn = new FfmNeuralNetwork(numLabels, inputLayer, outputLayer);
 		    
 		    
 			new TrainThread(this, args, dict, i, fileSize, inputLayer, outputLayer, nn).start();

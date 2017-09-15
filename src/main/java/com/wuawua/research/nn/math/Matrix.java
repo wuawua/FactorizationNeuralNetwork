@@ -62,6 +62,10 @@ public class Matrix {
         }
 	}
 	
+	public void mul(float a) {
+		data.muli(a);
+	}
+	
 	public float get(int row, int column) {
 		Preconditions.checkArgument(row >= 0);
 		Preconditions.checkArgument(row < rows);

@@ -40,6 +40,7 @@ public class Dictionary {
 	public int numWords;
 	public int numLabels;
 	public long numTokens;
+	public int numFields;
 
 	private Args args;
 	
@@ -95,6 +96,10 @@ public class Dictionary {
 
 	public long getNumTokens() {
 		return numTokens;
+	}
+	
+	public int getNumFields() {
+		return numFields;
 	}
 
 	public boolean discard(int id, float rand) {
@@ -237,6 +242,28 @@ public class Dictionary {
 						StringBuilder feature = new StringBuilder();
 						feature.append("f").append(ii).append("_").append(features[0]);
 						word = feature.toString();
+						
+						//Parse features
+						String[] tokens = word.split(":|::");
+						int field = ii - 1;
+						
+						//Read field or value, Id:Field:Value or Id:Value
+						if(features.length == ID_FIELD_VALUE_LENGTH ) {
+							for(int jj = 0; jj < tokens.length; jj++) {
+								if(jj == ID_FIELD_VALUE_FIELD_INDEX) {
+									try {
+										field = Integer.parseInt(tokens[jj]);
+									}
+									catch(Exception e) {
+									}
+								}
+							}
+						}
+						
+						if(field + 1 > numFields) {
+							numFields = field + 1;
+						}
+						
 					}
 					add(word);
 					if (numTokens % 1000000 == 0) {
@@ -299,7 +326,7 @@ public class Dictionary {
 				
 				//Parse features
 				String[] tokens = word.split(":|::");
-				int field = 0;
+				int field = ii - 1;
 				float value = 1.0f;
 				if(tokens.length > 0) {
 					

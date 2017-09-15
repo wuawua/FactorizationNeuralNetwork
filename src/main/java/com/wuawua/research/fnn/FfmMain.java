@@ -1,8 +1,9 @@
 package com.wuawua.research.fnn;
 
+import com.wuawua.research.fnn.manager.impl.FfmNeuralNetworkManager;
 import com.wuawua.research.fnn.manager.impl.FmNeuralNetworkManager;
 
-public class FmMain {
+public class FfmMain {
 
 	public void printUsage() {
 		System.out.print(
@@ -35,7 +36,7 @@ public class FmMain {
 	}
 	
 	public void run(String[] args) {
-		FmNeuralNetworkManager network = new FmNeuralNetworkManager();
+		FfmNeuralNetworkManager network = new FfmNeuralNetworkManager();
 		if (args.length < 2) {
 			printUsage();
 			System.exit(1);
@@ -57,22 +58,22 @@ public class FmMain {
 	}
 	
 	public static void main(String[] args) {
-		FmMain fnn = new FmMain();
+		FfmMain fnn = new FfmMain();
 		
 		args = new String[] {
 			"supervised",
 			"-input", "data/u1.feature.base.txt",
 			"-test", "data/u1.feature.test.txt",
 			"-output", "data/u1.model",
-			"-dim", "100", 
+			"-dim", "150", 
 			"-lr", "0.01", 
 			"-minCount", "0",
-			"-epoch", "500",
+			"-epoch", "200",
 			"-thread", "1",
 			"-labelIndex", "0",
 			"-numLabels", "1",
 			"-reg", "0.1",
-			"-skips", "3,4,5,6,7,8,9",
+			"-skips", "4,5,6,8,9",
 		};
 				
 		fnn.run(args);

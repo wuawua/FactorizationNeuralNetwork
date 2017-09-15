@@ -10,6 +10,7 @@ import com.wuawua.research.nn.data.Feature;
 import com.wuawua.research.nn.layer.Layer;
 import com.wuawua.research.nn.math.Matrix;
 import com.wuawua.research.nn.math.Vector;
+import com.wuawua.research.nn.optimizer.Optimizer;
 
 
 public class FmOutputLayer extends Layer<Feature> {
@@ -25,8 +26,8 @@ public class FmOutputLayer extends Layer<Feature> {
      * @param w initial feature weight vector
      * @param m initial feature interaction matrix
      */
-    public FmOutputLayer(int dim, int numLabels, float learnRate, Vector bias, Vector regBias, Matrix weights, Vector regWeights) {
-    	super(dim, learnRate, bias, regBias, weights, regWeights, null);
+    public FmOutputLayer(int dim, int numLabels, float learnRate, Vector bias, Vector regBias, Matrix weights, Vector regWeights, Optimizer<Feature> optimizer) {
+    	super(dim, learnRate, bias, regBias, weights, regWeights, optimizer);
     	this.numLabels = numLabels;
     	this.featureWeights = new Vector(weights.getRows());
     }
@@ -59,6 +60,12 @@ public class FmOutputLayer extends Layer<Feature> {
     		return computeSoftmax(output);
     	}
     }
+    
+    @Override
+	public Matrix forwardPropagate(DataRecord<Feature> record, Matrix hidden) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     public Vector computeSoftmax(Vector output) {		
 		double max = output.get(0);
@@ -98,6 +105,8 @@ public class FmOutputLayer extends Layer<Feature> {
     			float biasUpdate = -learnRate * (lambda + regBias.get(ii) * bias.get(ii));
     			bias.add(ii, biasUpdate);
     			
+    			//optimizer.update(hidden, ii, xi);
+    			
 	    		for(int jj = 0; jj < dim; jj++) {
 	    			int wIndex = ii * numLabels + index;
 	    			nextGradient.add(jj, lambda * xi * weights.get(wIndex, jj));
@@ -112,6 +121,11 @@ public class FmOutputLayer extends Layer<Feature> {
     	return nextGradient;
     }
     
+    @Override
+	public Matrix backwardPropagate(DataRecord<Feature> record, Matrix output, Matrix hidden, Matrix gradient) {
+		return null;
+	}
+    
     public float predict(float x) {
     	float min = 1.0f;
     	float max = 5.0f;
@@ -122,4 +136,8 @@ public class FmOutputLayer extends Layer<Feature> {
 	@Override
 	public void accumulateGradient(Vector grad) {
 	}
+
+	
+
+	
 }

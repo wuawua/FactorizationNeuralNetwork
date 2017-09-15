@@ -83,6 +83,15 @@ public abstract class Layer<T> {
      */
     public abstract Vector forwardPropagate(DataRecord<T> record, Vector hidden);
     
+    
+    /**
+     * Forward propagate
+     * @param record: data record of train data with features
+     * @param hidden
+     * @return
+     */
+    public abstract Matrix forwardPropagate(DataRecord<T> record, Matrix hidden);
+    
     /**
      * Backward propagate
      * @param record
@@ -94,6 +103,19 @@ public abstract class Layer<T> {
      */
     public abstract Vector backwardPropagate(DataRecord<T> record, Vector output, Vector hidden, Vector gradient);
 
+    
+    /**
+     * Backward propagate
+     * @param record
+     * @param output
+     * @param hidden
+     * @param gradient
+     * @param percent
+     * @return
+     */
+    public abstract Matrix backwardPropagate(DataRecord<T> record, Matrix output, Matrix hidden, Matrix gradient);
+
+    
     /**
      * Accumulate gradient
      * @param grad
@@ -123,5 +145,9 @@ public abstract class Layer<T> {
 
 	public float getLoss() {
 		return loss;
+	}
+	
+	public float getLearnRate() {
+		return learnRate;
 	}
 }

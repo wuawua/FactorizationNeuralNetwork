@@ -52,6 +52,7 @@ public class NeuralNetworkManager {
 	protected static final Logger LOG = Logger.getLogger(NeuralNetworkManager.class.getName());
 
 	protected int numLabels;
+	protected int numFields;
     int trainNum = 0;
     
     protected static Logger logger = Logger.getLogger(NeuralNetworkManager.class);

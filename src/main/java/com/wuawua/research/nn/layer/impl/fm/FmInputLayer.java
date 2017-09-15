@@ -23,6 +23,7 @@ public class FmInputLayer extends Layer<Feature> {
     	super(dim, numFeatures, learnRate, regBias, regWeights, rnd, sdev);
     }
 
+    @Override
     public Vector forwardPropagate(DataRecord<Feature> x, Vector hidden) {
     	Vector nextHidden = new Vector(dim);
         for(Feature feature : x.getFeatures()) {
@@ -39,7 +40,16 @@ public class FmInputLayer extends Layer<Feature> {
         nextHidden.mul((float)(1/(float)size));
         return nextHidden;
     }
+    
+    /**
+     * No implements
+     */
+    @Override
+	public Matrix forwardPropagate(DataRecord<Feature> record, Matrix hidden) {
+		return null;
+	}
 
+    
     @Override
     public Vector backwardPropagate(DataRecord<Feature> x, Vector output, Vector hidden, Vector gradient) {
     	for(Feature feature : x.getFeatures()) {
@@ -59,4 +69,11 @@ public class FmInputLayer extends Layer<Feature> {
 	@Override
 	public void accumulateGradient(Vector grad) {
 	}
+
+	@Override
+	public Matrix backwardPropagate(DataRecord<Feature> record, Matrix output, Matrix hidden, Matrix gradient) {
+		return null;
+	}
+
+	
 }

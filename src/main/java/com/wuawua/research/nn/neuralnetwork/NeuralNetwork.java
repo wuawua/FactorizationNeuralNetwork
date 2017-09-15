@@ -63,7 +63,7 @@ public class NeuralNetwork<T> {
     	else {
     		target = record.getTarget() - 1;
     	}
-    	Vector hidden = inputLayer.forwardPropagate(record, null);
+    	Vector hidden = inputLayer.forwardPropagate(record, new Vector(0));
     	Vector output = outputLayer.forwardPropagate(record, hidden);
     	int label = -1;
     	double max = Double.MIN_VALUE;

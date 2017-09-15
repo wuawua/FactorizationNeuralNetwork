@@ -33,7 +33,7 @@ public class FmNeuralNetwork extends NeuralNetwork<Feature> {
     	double percent = 1.0;
     	
     	//Forward
-    	Vector hidden = inputLayer.forwardPropagate(record, null);
+    	Vector hidden = inputLayer.forwardPropagate(record, new Vector(0));
     	Vector output = outputLayer.forwardPropagate(record, hidden);
     	
     	//Backward
@@ -51,7 +51,7 @@ public class FmNeuralNetwork extends NeuralNetwork<Feature> {
         	double percent = 1.0;
         	
         	//Forward
-        	Vector hidden = inputLayer.forwardPropagate(x, null);
+        	Vector hidden = inputLayer.forwardPropagate(x, new Vector(0));
         	Vector output = outputLayer.forwardPropagate(x, hidden);
         	
         	//Backward
