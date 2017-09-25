@@ -8,7 +8,6 @@ import com.wuawua.research.nn.data.DataSet;
 import com.wuawua.research.nn.data.Feature;
 import com.wuawua.research.nn.layer.Layer;
 import com.wuawua.research.nn.math.Matrix;
-import com.wuawua.research.nn.math.Vector;
 import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
 
 
@@ -32,8 +31,6 @@ public class FfmNeuralNetwork extends NeuralNetwork<Feature> {
      */
     @Override
     public void learn(DataRecord<Feature> record) {
-    	double percent = 1.0;
-    	
     	//Forward
     	Matrix hidden = inputLayer.forwardPropagate(record, new Matrix());
     	Matrix output = outputLayer.forwardPropagate(record, hidden);

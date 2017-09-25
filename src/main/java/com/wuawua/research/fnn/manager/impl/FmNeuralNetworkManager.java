@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import com.wuawua.research.fnn.manager.NeuralNetworkManager;
 import com.wuawua.research.fnn.manager.NeuralNetworkManager.TrainThread;
 import com.wuawua.research.fnn.utils.Utils;
+import com.wuawua.research.fnn.utils.concurrent.ConcurenceRunner;
 import com.wuawua.research.nn.data.Feature;
 import com.wuawua.research.nn.layer.Layer;
 import com.wuawua.research.nn.layer.impl.fm.FmInputLayer;
@@ -104,15 +105,16 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 		long fileSize = Utils.sizeLine(args.input);
 		for (int i = 0; i < args.thread; i++) {
 			
-			Optimizer<Feature> optimizer = new Adagrad<Feature>(0, 0, args.lr);
+			Optimizer<Feature> optimizer = new SGD<Feature>(0, 0, args.lr);
 			Layer<Feature> inputLayer = new FmInputLayer( args.dim, args.lr, inputBias, inputReg, inputWeights,inputReg, optimizer);
 			
-			Optimizer<Feature> optimizer2 = new Adagrad<Feature>(0, 0, args.lr);
+			Optimizer<Feature> optimizer2 = new SGD<Feature>(0, 0, args.lr);
 			Layer<Feature> outputLayer = new FmOutputLayer(args.dim, numLabels, args.lr, outputBias, inputReg, outputWeights, inputReg, optimizer2);
 		    NeuralNetwork<Feature> nn = new FmNeuralNetwork(numLabels, inputLayer, outputLayer);
 		    
 		    
 			new TrainThread(this, args, dict, i, fileSize, inputLayer, outputLayer, nn).start();
+		    //runTrain(fileSize, nn);
 		}
 
 		synchronized (this) {
@@ -123,6 +125,8 @@ public class FmNeuralNetworkManager extends NeuralNetworkManager {
 				}
 			}
 		}
+		
+		ConcurenceRunner.stop();
 		
 		
 		//runTrain();

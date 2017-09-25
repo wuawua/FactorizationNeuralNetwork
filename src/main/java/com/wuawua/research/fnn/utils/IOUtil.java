@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /***
- * 
+ * IO utils
  * @author Huang Haiping (hhp05@mails.tsinghua.edu.cn)
  *
  */

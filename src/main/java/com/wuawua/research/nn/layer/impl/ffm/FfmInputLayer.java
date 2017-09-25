@@ -82,12 +82,12 @@ public class FfmInputLayer extends Layer<Feature> {
         	int field = feature.getField();
         	float xi = feature.getValue();
         	
-        	//optimizer.update(gradient, ii, xi, field);
+        	optimizer.update(gradient, ii, xi, field);
     		
-        	for(int jj = 0; jj < dim; jj++) {
-    			float updateValue = - (learnRate * (gradient.get(field, jj) * xi + regWeights.get(ii) * weights.get(ii, jj)));
-    			weights.add(ii, jj, updateValue);
-            }
+        	//for(int jj = 0; jj < dim; jj++) {
+    		//	float updateValue = - (learnRate * (gradient.get(field, jj) * xi + regWeights.get(ii) * weights.get(ii, jj)));
+    		//	weights.add(ii, jj, updateValue);
+            //}
     	}
 		return null;
 	}

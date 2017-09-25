@@ -1,8 +1,5 @@
 package com.wuawua.research.fnn.manager;
 
-import static java.lang.Double.parseDouble;
-import static java.lang.Integer.parseInt;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -14,13 +11,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
@@ -33,12 +27,9 @@ import com.wuawua.research.nn.data.DataSet;
 import com.wuawua.research.nn.data.Feature;
 import com.wuawua.research.nn.data.SimpleDataSet;
 import com.wuawua.research.nn.layer.Layer;
-import com.wuawua.research.nn.layer.impl.fm.FmInputLayer;
-import com.wuawua.research.nn.layer.impl.fm.FmOutputLayer;
 import com.wuawua.research.nn.math.Matrix;
 import com.wuawua.research.nn.math.Vector;
 import com.wuawua.research.nn.neuralnetwork.NeuralNetwork;
-import com.wuawua.research.nn.neuralnetwork.impl.FmNeuralNetwork;
 
 
 
@@ -163,6 +154,7 @@ public class NeuralNetworkManager {
 					
 					//Display neural network model performance.
 					if (threadId == 0 && epoch % 10 == 0) {
+						//System.out.println("Epoch finish: " + epoch);
 						try {
 							double trainRMSE = test(args.input, nn);
 							double testRMSE = test(args.test, nn);
@@ -186,6 +178,55 @@ public class NeuralNetworkManager {
 		}
 	}
 	
+	
+	
+	public void runTrain(long fileSize, NeuralNetwork<Feature> nn) {
+		//if (logger.isDebugEnabled()) {
+		//	logger.debug("thread: " + threadId + " RUNNING!");
+		//}
+		
+		long begin = 0; //threadId * fileSize / args.thread;
+		long end = fileSize; //(threadId + 1) * fileSize / args.thread;
+		
+		
+		SimpleDataSet<DataRecord<Feature>> trainSet;
+		try {
+			trainSet = getDataSet(args, dict, args.input, begin, end, labelIndex);
+			
+			SimpleDataSet<DataRecord<Feature>> testSet = null;
+			if(args.test != null) {
+				testSet = getDataSet(args, dict, args.test, begin, end, labelIndex);
+			}
+			
+			for(int epoch = 1; epoch <= args.epoch; epoch++) {				
+				
+				//Train neural network
+				nn.learn(epoch, trainSet, testSet);
+				
+				
+				//Display neural network model performance.
+				//if (threadId == 0 && epoch % 10 == 0) {
+					try {
+						double trainRMSE = test(args.input, nn);
+						double testRMSE = test(args.test, nn);
+						System.out.printf("epoch %d, train RMSE %.8f, test RMSE %.8f%n", epoch, trainRMSE, testRMSE);
+					} catch (IOException e) {;
+					}	
+				//}
+			} //End of for
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//synchronized (network) {
+		//	if (logger.isDebugEnabled()) {
+		//		logger.debug("thread: " + threadId + " EXIT!");
+		//	}
+		//	network.threadCount--;
+		//	network.notify();
+		//}
+	}
 	/**
 	 * Read data set from file
 	 * @param args

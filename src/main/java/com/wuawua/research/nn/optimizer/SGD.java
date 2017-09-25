@@ -39,8 +39,9 @@ public class SGD<T> implements Optimizer<T> {
     	Vector regWeights = layer.getRegWeights();
     	
     	for(int jj = 0; jj < weights.getColumns(); jj++) {
-			float updateValue = - (learnRate * (gradient.get(jj) * xi + regWeights.get(index) * weights.get(index, jj)));
-			weights.add(index, jj, updateValue);
+			//float updateValue = - (learnRate * (gradient.get(jj) * xi + regWeights.get(index) * weights.get(index, jj)));
+			weights.add(index, jj, 
+					- (learnRate * (gradient.get(jj) * xi + regWeights.get(index) * weights.get(index, jj))));
         }
     }
     

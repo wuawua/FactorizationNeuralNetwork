@@ -3,8 +3,11 @@ package com.wuawua.research.nn.layer.impl.fm;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import java.util.List;
 import java.util.Random;
 
+import com.wuawua.research.fnn.utils.concurrent.ConcurenceRunner;
+import com.wuawua.research.fnn.utils.concurrent.TaskManager;
 import com.wuawua.research.nn.data.DataRecord;
 import com.wuawua.research.nn.data.Feature;
 import com.wuawua.research.nn.layer.Layer;
@@ -88,7 +91,7 @@ public class FmOutputLayer extends Layer<Feature> {
     public Vector backwardPropagate(DataRecord<Feature> x, Vector output, Vector hidden, Vector gradient) {
     	Vector nextGradient = new Vector(dim);
     	int target = (numLabels == SINGLE_LABEL_NUMBER)?(int)(x.getTarget()):(int)(x.getTarget() - 1);
-
+    	
     	for(Feature feature : x.getFeatures()) {
         	int ii = (int)feature.getID();
         	float xi = feature.getValue();
@@ -102,19 +105,23 @@ public class FmOutputLayer extends Layer<Feature> {
     			}
     			float lambda = predict(output.get(index)) - label;
     			
-    			float biasUpdate = -learnRate * (lambda + regBias.get(ii) * bias.get(ii));
-    			bias.add(ii, biasUpdate);
+    			//float biasUpdate = -learnRate * (lambda + regBias.get(ii) * bias.get(ii));
+    			bias.add(ii, 
+    					-learnRate * (lambda + regBias.get(ii) * bias.get(ii)));
     			
     			//optimizer.update(hidden, ii, xi);
     			
-	    		for(int jj = 0; jj < dim; jj++) {
-	    			int wIndex = ii * numLabels + index;
+    			int wIndex = ii * numLabels + index;
+    			
+	    		for(int jj = 0; jj < dim; jj++) {	
 	    			nextGradient.add(jj, lambda * xi * weights.get(wIndex, jj));
-	    			float updateWeight = -(float)(learnRate * (lambda * hidden.get(jj) * xi + regWeights.get(ii) * weights.get(wIndex,jj)));
-	    			weights.add(wIndex, jj, updateWeight);
+	    			//float updateWeight = -(float)(learnRate * (lambda * hidden.get(jj) * xi + regWeights.get(ii) * weights.get(wIndex,jj)));
+	    			weights.add(wIndex, jj, 
+	    					-(float)(learnRate * (lambda * hidden.get(jj) * xi + regWeights.get(ii) * weights.get(wIndex,jj))));
 	            }
     		}
     	}
+    	
     	
     	int size = x.getFeatureSize();
     	nextGradient.mul((float)(1/(float)size));

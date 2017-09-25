@@ -31,8 +31,7 @@ public class FmInputLayer extends Layer<Feature> {
         	float xi = feature.getValue();
         	
         	for(int jj = 0; jj < dim; jj++) {
-        		float value =  ((float)xi) * weights.get(ii, jj);
-        		nextHidden.add(jj, value);
+        		nextHidden.add(jj, xi * weights.get(ii, jj) );
         	}
         }
         

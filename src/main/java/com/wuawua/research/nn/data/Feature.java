@@ -1,11 +1,16 @@
 package com.wuawua.research.nn.data;
 
+/***
+ * Feature of data record
+ * example: 1:1:1.0  ID:Field:Value
+ * @author Huang Haiping
+ *
+ */
 public class Feature {
 	private int id;
 	private int field;
 	private float value;
-	//private float target;
-	
+
 	public Feature(int id, int field, float value) {
 		this.id = id;
 		this.field = field;
@@ -35,14 +40,6 @@ public class Feature {
 	public void setValue(float value) {
 		this.value = value;
 	}
-
-	//public float getTarget() {
-	//	return target;
-	//}
-
-	//public void setTarget(float target) {
-	//	this.target = target;
-	//}
 	
 	public String toString() {
 		StringBuilder content = new StringBuilder();

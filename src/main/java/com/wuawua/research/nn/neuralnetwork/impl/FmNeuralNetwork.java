@@ -48,8 +48,6 @@ public class FmNeuralNetwork extends NeuralNetwork<Feature> {
     public void learn(int numIter, DataSet<DataRecord<Feature>> train, DataSet<DataRecord<Feature>> test) {
         train.shuffle();
         train.stream().forEach(x -> {
-        	double percent = 1.0;
-        	
         	//Forward
         	Vector hidden = inputLayer.forwardPropagate(x, new Vector(0));
         	Vector output = outputLayer.forwardPropagate(x, hidden);

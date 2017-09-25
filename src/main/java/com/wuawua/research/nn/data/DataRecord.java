@@ -4,11 +4,9 @@ package com.wuawua.research.nn.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
-
 /***
  * Data record
- * Record format: target id:field:value
+ * Record format: target id:field:value, id:field:value, ......
  * example: 5 1:1:0.5 2:2:1.5 3:2:1
  *  
  * @author Huang Haiping
